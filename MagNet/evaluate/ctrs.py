@@ -14,16 +14,32 @@ import json
 import os
 from pathlib import Path
 from langchain.prompts import PromptTemplate
-from openai import AzureOpenAI
+from openai import AzureOpenAI, OpenAI
 import tiktoken
 
 
 # ========== 配置 ==========
-# 请在此处设置您的Azure OpenAI凭据
+# Azure OpenAI 凭据
 AZURE_ENDPOINT = "your_azure_endpoint"
 AZURE_API_KEY = "your_subscription_key"
 AZURE_API_VERSION = "2024-02-01"
 AZURE_DEPLOYMENT = "gpt-4o"
+
+# 阿里云 DashScope API 配置
+DASHSCOPE_API_KEY = os.getenv("DASHSCOPE_API_KEY")
+DASHSCOPE_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+DASHSCOPE_MODEL = "qwen2.5-7b-instruct"
+
+# OpenRouter API 配置 (用于评估)
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
+OPENROUTER_MODEL = "openai/gpt-4o"
+OPENROUTER_SITE_URL = os.getenv("OPENROUTER_SITE_URL", "")
+OPENROUTER_SITE_NAME = os.getenv("OPENROUTER_SITE_NAME", "")
+
+# 默认使用的API提供商
+# 可选值: "azure", "dashscope"
+EVALUATION_PROVIDER = "azure"
 
 
 def num_tokens_from_messages(messages, model="gpt-4o"):
@@ -69,9 +85,10 @@ def load_prompt(prompts_dir: str, filename: str) -> str:
 
 def evaluate_ctrs_single_session(
     session_data: dict,
-    evaluator: AzureOpenAI,
+    evaluator,
     prompts_dir: str,
-    max_iter: int = 3
+    max_iter: int = 3,
+    model_name: str = AZURE_DEPLOYMENT
 ) -> dict:
     """
     评估单个会话的CTRS分数
@@ -104,11 +121,11 @@ def evaluate_ctrs_single_session(
         prompt = prompt_template.format(conversation=history)
         messages = [{"role": "user", "content": prompt}]
 
-        # 调用GPT-4o评估，多次运行取平均
+        # 调用LLM评估，多次运行取平均
         response = evaluator.chat.completions.create(
             messages=messages,
             temperature=0,
-            model=AZURE_DEPLOYMENT,
+            model=model_name,
             n=max_iter
         )
 
@@ -144,15 +161,57 @@ def main():
     parser.add_argument("--prompts_dir", type=str,
                         default="prompts/ctrs",
                         help="CTRS prompt模板目录")
+    parser.add_argument("--use_dashscope", action="store_true",
+                        help="使用阿里云DashScope API进行评估")
+    parser.add_argument("--dashscope_model", type=str, default=DASHSCOPE_MODEL,
+                        help=f"阿里云模型名称（默认: {DASHSCOPE_MODEL}）")
+    parser.add_argument("--use_openrouter", action="store_true",
+                        help="使用OpenRouter API进行评估（推荐）")
+    parser.add_argument("--openrouter_model", type=str, default=OPENROUTER_MODEL,
+                        help=f"OpenRouter模型名称（默认: {OPENROUTER_MODEL}）")
 
     args = parser.parse_args()
 
-    # 初始化Azure OpenAI客户端
-    evaluator = AzureOpenAI(
-        api_version=AZURE_API_VERSION,
-        azure_endpoint=AZURE_ENDPOINT,
-        api_key=AZURE_API_KEY,
-    )
+    # 初始化评估客户端
+    if args.use_openrouter:
+        if not OPENROUTER_API_KEY:
+            print("错误: 使用OpenRouter API需要设置 OPENROUTER_API_KEY 环境变量")
+            print("请在终端中运行: set OPENROUTER_API_KEY=sk-or-xxx  (Windows)")
+            print("或: export OPENROUTER_API_KEY=sk-or-xxx  (Linux/Mac)")
+            return
+        extra_headers = {}
+        if OPENROUTER_SITE_URL:
+            extra_headers["HTTP-Referer"] = OPENROUTER_SITE_URL
+        if OPENROUTER_SITE_NAME:
+            extra_headers["X-Title"] = OPENROUTER_SITE_NAME
+
+        evaluator = OpenAI(
+            base_url=OPENROUTER_BASE_URL,
+            api_key=OPENROUTER_API_KEY,
+            default_headers=extra_headers if extra_headers else None
+        )
+        model_name = args.openrouter_model
+        print(f"Using OpenRouter API with model: {model_name}")
+    elif args.use_dashscope:
+        if not DASHSCOPE_API_KEY:
+            print("错误: 使用阿里云API需要设置 DASHSCOPE_API_KEY 环境变量")
+            print("请在终端中运行: set DASHSCOPE_API_KEY=sk-xxx  (Windows)")
+            print("或: export DASHSCOPE_API_KEY=sk-xxx  (Linux/Mac)")
+            return
+        evaluator = OpenAI(
+            api_key=DASHSCOPE_API_KEY,
+            base_url=DASHSCOPE_BASE_URL
+        )
+        model_name = args.dashscope_model
+        print(f"Using 阿里云DashScope API with model: {model_name}")
+    else:
+        evaluator = AzureOpenAI(
+            api_version=AZURE_API_VERSION,
+            azure_endpoint=AZURE_ENDPOINT,
+            api_key=AZURE_API_KEY,
+        )
+        model_name = AZURE_DEPLOYMENT
+        print(f"Using Azure OpenAI with model: {model_name}")
 
     input_dir = Path(args.input)
     output_dir = Path(args.output)
@@ -181,7 +240,8 @@ def main():
                 session_data,
                 evaluator,
                 args.prompts_dir,
-                args.max_iter
+                args.max_iter,
+                model_name
             )
             all_scores[session_file.name] = scores
 

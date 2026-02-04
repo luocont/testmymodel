@@ -57,38 +57,26 @@ python generate/generate_dialogue.py \
 #### 多样性评估
 
 ```bash
-python evaluate/diversity.py \
-  --input output/sessions \
-  --output results/diversity.json
+python evaluate/diversity.py --input output/sessions --output results/diversity.json
 ```
 
 #### CTRS评估
 
 ```bash
-python evaluate/ctrs.py \
-  --input output/sessions \
-  --output results/ctrs \
-  --max_iter 3
+python evaluate/ctrs.py --input output/sessions --output results/ctrs --max_iter 3
 ```
 
 #### WAI评估
 
 ```bash
-python evaluate/wai.py \
-  --input output/sessions \
-  --output results/wai \
-  --max_iter 3
+python evaluate/wai.py --input output/sessions --output results/wai --max_iter 3
 ```
 
 #### PANAS评估
 
 ```bash
 # 评估咨询后情感状态
-python evaluate/panas.py \
-  --input output/sessions \
-  --dataset dataset/test_data.json \
-  --output results/panas \
-  --max_iter 3
+python evaluate/panas.py --input output/sessions --dataset dataset/test_data.json --output results/panas --max_iter 3
 ```
 
 ## 📊 输出数据格式

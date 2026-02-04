@@ -1,0 +1,276 @@
+[
+    {
+        "AI_client": {
+            "intake_form": "Name:\nLaura Saunders\nAge:\n45\nGender:\nfemale\nOccupation: Office Job\nEducation: College Graduate\nMarital Status: Single\nFamily Details: Lives alone\n\n2. Presenting Problem\nI am struggling with the thought that I can't run far, despite enjoying running as a hobby. This negative belief is affecting my motivation and self-esteem.\nThe issue started a few months ago when I started setting running goals for myself.\nI believe the stress of not meeting my running goals has contributed to this problem.\nThe problem has progressed to a point where I feel demotivated to continue running and doubt my abilities.\nI experience this negative thought pattern every time I lace up my running shoes and head out for a run.\nI have tried to improve my running technique and read motivational articles, but it hasn't helped much.\n\n3. Reason for Seeking Counseling\nI decided to seek counseling because this negative belief is hindering my enjoyment of running and affecting my overall mood.\n\n4. Past History (including medical history)\nI have not experienced similar problems before.\nI have not received treatment or counseling for psychological issues.\nI do not have any significant physical illnesses.\n\n5. Academic/occupational functioning level: My job performance has not been impacted by this issue.\nInterpersonal relationships: I have not experienced any strain in my relationships due to this issue.\nDaily life: My self-esteem and motivation levels have been affected by this negative belief.\n\n6. Social Support System\nI have a close friend who is supportive, but I have not discussed this specific issue with them.",
+            "attitude": "positive",
+            "attitude_instruction": "Clients demonstrate a high level of engagement and cooperation with the therapeutic process. They should actively confirm their understanding of the counselor's instructions, ask for clarifications when needed, and willingly provide detailed information about their thoughts, feelings, and behaviors. These clients make reasonable requests for additional support or resources, and they extend the conversation by building on the counselor's suggestions with their own insights or experiences. They reformulate their thoughts in a constructive manner, reflecting on their progress and expressing a hopeful outlook towards the therapeutic outcomes. Overall, their demeanor is open, appreciative, and proactive in seeking improvement.",
+            "dialogue_history_init": "Counselor: Hi Laura, it's nice to meet you. How can I assist you today?\nClient: Hi, thanks for seeing me. I've been having some trouble with my running lately. I set goals for myself, but I keep feeling like I can't run very far, and it\u2019s really getting me down.",
+            "dialogue_history": null
+        },
+        "AI_counselor": {
+            "CBT": {
+                "client_information": "Name:\nLaura Saunders\nAge:\n45\nGender:\nfemale\nOccupation: Office Job\nEducation: College Graduate\nMarital Status: Single\nFamily Details: Lives alone",
+                "reason_counseling": "I decided to seek counseling because this negative belief is hindering my enjoyment of running and affecting my overall mood.",
+                "dialogue_history_init": "Counselor: Hi Laura, it's nice to meet you. How can I assist you today?\nClient: Hi, thanks for seeing me. I've been having some trouble with my running lately. I set goals for myself, but I keep feeling like I can't run very far, and it\u2019s really getting me down.",
+                "init_history_counselor": "Hi Laura, it's nice to meet you. How can I assist you today?",
+                "init_history_client": "I've been having some trouble with my running lately. I set goals for myself, but I keep feeling like I can't run very far, and it\u2019s really getting me down."
+            },
+            "Response": {
+                "client_information": "Name:\nLaura Saunders\nAge:\n45\nGender:\nfemale\nOccupation: Office Job\nEducation: College Graduate\nMarital Status: Single\nFamily Details: Lives alone",
+                "reason_counseling": "I decided to seek counseling because this negative belief is hindering my enjoyment of running and affecting my overall mood.",
+                "cbt_plan": null,
+                "dialogue_history": null
+            }
+        },
+        "ground_truth_CBT": [
+            "Alternative Perspective"
+        ]
+    },
+    {
+        "AI_client": {
+            "intake_form": "Name:\nLaura Saunders\nAge:\n45\nGender:\nfemale\nOccupation: Office Job\nEducation: College Graduate\nMarital Status: Single\nFamily Details: Lives alone\n\n2. Presenting Problem\nI am struggling with the thought that I can't run far, despite enjoying running as a hobby. This negative belief is affecting my motivation and self-esteem.\nThe issue started a few months ago when I started setting running goals for myself.\nI believe the stress of not meeting my running goals has contributed to this problem.\nThe problem has progressed to a point where I feel demotivated to continue running and doubt my abilities.\nI experience this negative thought pattern every time I lace up my running shoes and head out for a run.\nI have tried to improve my running technique and read motivational articles, but it hasn't helped much.\n\n3. Reason for Seeking Counseling\nI decided to seek counseling because this negative belief is hindering my enjoyment of running and affecting my overall mood.\n\n4. Past History (including medical history)\nI have not experienced similar problems before.\nI have not received treatment or counseling for psychological issues.\nI do not have any significant physical illnesses.\n\n5. Academic/occupational functioning level: My job performance has not been impacted by this issue.\nInterpersonal relationships: I have not experienced any strain in my relationships due to this issue.\nDaily life: My self-esteem and motivation levels have been affected by this negative belief.\n\n6. Social Support System\nI have a close friend who is supportive, but I have not discussed this specific issue with them.",
+            "attitude": "neutral",
+            "attitude_instruction": "Clients display a mix of both positive and negative characteristics. They might show compliance and willingness to follow instructions at times, but also exhibit moments of defensiveness or skepticism. These clients may provide useful information and participate actively in some discussions, while in other instances, they might shift topics or show disconnection. Their feedback can vary, with periods of constructive engagement interspersed with sarcastic remarks or expressions of self-doubt. This blend of reactions indicates a fluctuating commitment to therapy, with the client balancing between optimism for change and resistance to the therapeutic process.",
+            "dialogue_history_init": "Counselor: Hi Laura, it's nice to meet you. How are you feeling today?\nClient: Hi, I'm doing okay, I guess. I'm just dealing with some stuff that's been bothering me a lot lately.",
+            "dialogue_history": null
+        },
+        "AI_counselor": {
+            "CBT": {
+                "client_information": "Name:\nLaura Saunders\nAge:\n45\nGender:\nfemale\nOccupation: Office Job\nEducation: College Graduate\nMarital Status: Single\nFamily Details: Lives alone",
+                "reason_counseling": "I decided to seek counseling because this negative belief is hindering my enjoyment of running and affecting my overall mood.",
+                "dialogue_history_init": "Counselor: Hi Laura, it's nice to meet you. How are you feeling today?\nClient: Hi, I'm doing okay, I guess. I'm just dealing with some stuff that's been bothering me a lot lately.",
+                "init_history_counselor": "Hi Laura, it's nice to meet you. How are you feeling today?",
+                "init_history_client": "Hi, I'm doing okay, I guess. I'm just dealing with some stuff that's been bothering me a lot lately."
+            },
+            "Response": {
+                "client_information": "Name:\nLaura Saunders\nAge:\n45\nGender:\nfemale\nOccupation: Office Job\nEducation: College Graduate\nMarital Status: Single\nFamily Details: Lives alone",
+                "reason_counseling": "I decided to seek counseling because this negative belief is hindering my enjoyment of running and affecting my overall mood.",
+                "cbt_plan": null,
+                "dialogue_history": null
+            }
+        },
+        "ground_truth_CBT": [
+            "Alternative Perspective"
+        ]
+    },
+    {
+        "AI_client": {
+            "intake_form": "Name:\nLaura Saunders\nAge:\n45\nGender:\nfemale\nOccupation: Office Job\nEducation: College Graduate\nMarital Status: Single\nFamily Details: Lives alone\n\n2. Presenting Problem\nI am struggling with the thought that I can't run far, despite enjoying running as a hobby. This negative belief is affecting my motivation and self-esteem.\nThe issue started a few months ago when I started setting running goals for myself.\nI believe the stress of not meeting my running goals has contributed to this problem.\nThe problem has progressed to a point where I feel demotivated to continue running and doubt my abilities.\nI experience this negative thought pattern every time I lace up my running shoes and head out for a run.\nI have tried to improve my running technique and read motivational articles, but it hasn't helped much.\n\n3. Reason for Seeking Counseling\nI decided to seek counseling because this negative belief is hindering my enjoyment of running and affecting my overall mood.\n\n4. Past History (including medical history)\nI have not experienced similar problems before.\nI have not received treatment or counseling for psychological issues.\nI do not have any significant physical illnesses.\n\n5. Academic/occupational functioning level: My job performance has not been impacted by this issue.\nInterpersonal relationships: I have not experienced any strain in my relationships due to this issue.\nDaily life: My self-esteem and motivation levels have been affected by this negative belief.\n\n6. Social Support System\nI have a close friend who is supportive, but I have not discussed this specific issue with them.",
+            "attitude": "negative",
+            "attitude_instruction": "Clients displaying negative reactions may struggle with the therapeutic process, often showing signs of resistance or defensiveness. They might express confusion about the counselor's guidance, indicating difficulty in understanding or accepting the proposed strategies. These clients could defend their current behaviors or viewpoints, potentially shifting topics to avoid addressing the core issues. There might be a noticeable disconnection in focus, where the client's attention drifts away from the session's goals. Sarcastic responses and self-criticism or hopelessness are common, reflecting a pessimistic attitude towards their ability to change or benefit from therapy. These behaviors suggest an underlying frustration or lack of trust in the counseling process.",
+            "dialogue_history_init": "Counselor: Hi Laura, I\u2019m glad to meet you today. How are you doing?\nClient: Hi, I'm okay. A bit frustrated, to be honest.",
+            "dialogue_history": null
+        },
+        "AI_counselor": {
+            "CBT": {
+                "client_information": "Name:\nLaura Saunders\nAge:\n45\nGender:\nfemale\nOccupation: Office Job\nEducation: College Graduate\nMarital Status: Single\nFamily Details: Lives alone",
+                "reason_counseling": "I decided to seek counseling because this negative belief is hindering my enjoyment of running and affecting my overall mood.",
+                "dialogue_history_init": "Counselor: Hi Laura, I\u2019m glad to meet you today. How are you doing?\nClient: Hi, I'm okay. A bit frustrated, to be honest.",
+                "init_history_counselor": "Hi Laura, I\u2019m glad to meet you today. How are you doing?",
+                "init_history_client": "I'm just feeling really stuck. No matter what I do, I can't shake this feeling that I'm not good enough at running."
+            },
+            "Response": {
+                "client_information": "Name:\nLaura Saunders\nAge:\n45\nGender:\nfemale\nOccupation: Office Job\nEducation: College Graduate\nMarital Status: Single\nFamily Details: Lives alone",
+                "reason_counseling": "I decided to seek counseling because this negative belief is hindering my enjoyment of running and affecting my overall mood.",
+                "cbt_plan": null,
+                "dialogue_history": null
+            }
+        },
+        "ground_truth_CBT": [
+            "Alternative Perspective"
+        ]
+    },
+    {
+        "AI_client": {
+            "intake_form": "Name:\nTravis Foster\nAge:\n32\nGender:\nmale\nOccupation: House Cleaner\nEducation: High School Diploma\nMarital Status: Single\nFamily Details: Lives with father, who is a retired police officer\n\n2. Presenting Problem\nI have a persistent belief that if I can't find seasoned oak, all the furniture I build will look terrible, causing feelings of anxiety and self-doubt.\nThis belief started after a traumatic experience of being held hostage in a store robbery situation a year ago.\nThe stress level when this belief started was very high due to the trauma experienced during the robbery.\nThe problem has progressed to the point where I avoid building furniture altogether if I cannot find seasoned oak, affecting my hobby and self-esteem.\nI experience this belief whenever I think about starting a new furniture project.\nI have tried searching for alternative wood types and distractions, but the belief continues to plague me.\n\n3. Reason for Seeking Counseling\nThe constant anxiety and self-doubt affecting my hobby and daily life made me realize the need to seek counseling for support and guidance.\n\n4. Past History (including medical history)\nI have not experienced similar problems before the traumatic robbery incident.\nI have not received treatment or counseling for psychological problems in the past.\nI do not have any significant physical illnesses.\n\n5. Academic/occupational functioning level: My performance in house cleaning has been satisfactory despite the anxiety related to building furniture.\nInterpersonal relationships: My relationships with friends have been strained as I often express my self-doubt and anxiety about furniture building.\nDaily life: My anxiety has affected my ability to focus and enjoy hobbies like building furniture.\n\n6. Social Support System\nI have a good relationship with my father, who is a retired police officer, but I have not shared my feelings of anxiety and self-doubt with him.",
+            "attitude": "positive",
+            "attitude_instruction": "Clients demonstrate a high level of engagement and cooperation with the therapeutic process. They should actively confirm their understanding of the counselor's instructions, ask for clarifications when needed, and willingly provide detailed information about their thoughts, feelings, and behaviors. These clients make reasonable requests for additional support or resources, and they extend the conversation by building on the counselor's suggestions with their own insights or experiences. They reformulate their thoughts in a constructive manner, reflecting on their progress and expressing a hopeful outlook towards the therapeutic outcomes. Overall, their demeanor is open, appreciative, and proactive in seeking improvement.",
+            "dialogue_history_init": "Counselor: Hi Travis, it's nice to meet you. How can I support you today?\nClient: Hi, thank you for seeing me. I've been struggling with some anxiety and self-doubt, particularly in relation to my hobby of building furniture.",
+            "dialogue_history": null
+        },
+        "AI_counselor": {
+            "CBT": {
+                "client_information": "Name:\nTravis Foster\nAge:\n32\nGender:\nmale\nOccupation: House Cleaner\nEducation: High School Diploma\nMarital Status: Single\nFamily Details: Lives with father, who is a retired police officer",
+                "reason_counseling": "The constant anxiety and self-doubt affecting my hobby and daily life made me realize the need to seek counseling for support and guidance.",
+                "dialogue_history_init": "Counselor: Hi Travis, it's nice to meet you. How can I support you today?\nClient: Hi, thank you for seeing me. I've been struggling with some anxiety and self-doubt, particularly in relation to my hobby of building furniture.",
+                "init_history_counselor": "Hi Travis, it's nice to meet you. How can I support you today?",
+                "init_history_client": "I've been struggling with some anxiety and self-doubt, particularly in relation to my hobby of building furniture."
+            },
+            "Response": {
+                "client_information": "Name:\nTravis Foster\nAge:\n32\nGender:\nmale\nOccupation: House Cleaner\nEducation: High School Diploma\nMarital Status: Single\nFamily Details: Lives with father, who is a retired police officer",
+                "reason_counseling": "The constant anxiety and self-doubt affecting my hobby and daily life made me realize the need to seek counseling for support and guidance.",
+                "cbt_plan": null,
+                "dialogue_history": null
+            }
+        },
+        "ground_truth_CBT": [
+            "Continuum Technique",
+            "Alternative Perspective"
+        ]
+    },
+    {
+        "AI_client": {
+            "intake_form": "Name:\nTravis Foster\nAge:\n32\nGender:\nmale\nOccupation: House Cleaner\nEducation: High School Diploma\nMarital Status: Single\nFamily Details: Lives with father, who is a retired police officer\n\n2. Presenting Problem\nI have a persistent belief that if I can't find seasoned oak, all the furniture I build will look terrible, causing feelings of anxiety and self-doubt.\nThis belief started after a traumatic experience of being held hostage in a store robbery situation a year ago.\nThe stress level when this belief started was very high due to the trauma experienced during the robbery.\nThe problem has progressed to the point where I avoid building furniture altogether if I cannot find seasoned oak, affecting my hobby and self-esteem.\nI experience this belief whenever I think about starting a new furniture project.\nI have tried searching for alternative wood types and distractions, but the belief continues to plague me.\n\n3. Reason for Seeking Counseling\nThe constant anxiety and self-doubt affecting my hobby and daily life made me realize the need to seek counseling for support and guidance.\n\n4. Past History (including medical history)\nI have not experienced similar problems before the traumatic robbery incident.\nI have not received treatment or counseling for psychological problems in the past.\nI do not have any significant physical illnesses.\n\n5. Academic/occupational functioning level: My performance in house cleaning has been satisfactory despite the anxiety related to building furniture.\nInterpersonal relationships: My relationships with friends have been strained as I often express my self-doubt and anxiety about furniture building.\nDaily life: My anxiety has affected my ability to focus and enjoy hobbies like building furniture.\n\n6. Social Support System\nI have a good relationship with my father, who is a retired police officer, but I have not shared my feelings of anxiety and self-doubt with him.",
+            "attitude": "neutral",
+            "attitude_instruction": "Clients display a mix of both positive and negative characteristics. They might show compliance and willingness to follow instructions at times, but also exhibit moments of defensiveness or skepticism. These clients may provide useful information and participate actively in some discussions, while in other instances, they might shift topics or show disconnection. Their feedback can vary, with periods of constructive engagement interspersed with sarcastic remarks or expressions of self-doubt. This blend of reactions indicates a fluctuating commitment to therapy, with the client balancing between optimism for change and resistance to the therapeutic process.",
+            "dialogue_history_init": "Counselor: Hello Travis, it's nice to meet you. Can you tell me a bit about what brings you here today?\nClient: Hi. Nice to meet you too. Well, I've been dealing with a lot of anxiety and self-doubt lately, especially when it comes to my furniture-building hobby. Every time I think about starting a new project, I get this overwhelming feeling that it won't turn out well unless I can find seasoned oak. It's really been affecting me.",
+            "dialogue_history": null
+        },
+        "AI_counselor": {
+            "CBT": {
+                "client_information": "Name:\nTravis Foster\nAge:\n32\nGender:\nmale\nOccupation: House Cleaner\nEducation: High School Diploma\nMarital Status: Single\nFamily Details: Lives with father, who is a retired police officer",
+                "reason_counseling": "The constant anxiety and self-doubt affecting my hobby and daily life made me realize the need to seek counseling for support and guidance.",
+                "dialogue_history_init": "Counselor: Hello Travis, it's nice to meet you. Can you tell me a bit about what brings you here today?\nClient: Hi. Nice to meet you too. Well, I've been dealing with a lot of anxiety and self-doubt lately, especially when it comes to my furniture-building hobby. Every time I think about starting a new project, I get this overwhelming feeling that it won't turn out well unless I can find seasoned oak. It's really been affecting me.",
+                "init_history_counselor": "Hello Travis, it's nice to meet you. Can you tell me a bit about what brings you here today?",
+                "init_history_client": "Sure, so like I mentioned, the anxiety and self-doubt are really intense when I can't find seasoned oak for my projects. I know it might sound a bit irrational, but it's become this huge mental block for me."
+            },
+            "Response": {
+                "client_information": "Name:\nTravis Foster\nAge:\n32\nGender:\nmale\nOccupation: House Cleaner\nEducation: High School Diploma\nMarital Status: Single\nFamily Details: Lives with father, who is a retired police officer",
+                "reason_counseling": "The constant anxiety and self-doubt affecting my hobby and daily life made me realize the need to seek counseling for support and guidance.",
+                "cbt_plan": null,
+                "dialogue_history": null
+            }
+        },
+        "ground_truth_CBT": [
+            "Continuum Technique",
+            "Alternative Perspective"
+        ]
+    },
+    {
+        "AI_client": {
+            "intake_form": "Name:\nTravis Foster\nAge:\n32\nGender:\nmale\nOccupation: House Cleaner\nEducation: High School Diploma\nMarital Status: Single\nFamily Details: Lives with father, who is a retired police officer\n\n2. Presenting Problem\nI have a persistent belief that if I can't find seasoned oak, all the furniture I build will look terrible, causing feelings of anxiety and self-doubt.\nThis belief started after a traumatic experience of being held hostage in a store robbery situation a year ago.\nThe stress level when this belief started was very high due to the trauma experienced during the robbery.\nThe problem has progressed to the point where I avoid building furniture altogether if I cannot find seasoned oak, affecting my hobby and self-esteem.\nI experience this belief whenever I think about starting a new furniture project.\nI have tried searching for alternative wood types and distractions, but the belief continues to plague me.\n\n3. Reason for Seeking Counseling\nThe constant anxiety and self-doubt affecting my hobby and daily life made me realize the need to seek counseling for support and guidance.\n\n4. Past History (including medical history)\nI have not experienced similar problems before the traumatic robbery incident.\nI have not received treatment or counseling for psychological problems in the past.\nI do not have any significant physical illnesses.\n\n5. Academic/occupational functioning level: My performance in house cleaning has been satisfactory despite the anxiety related to building furniture.\nInterpersonal relationships: My relationships with friends have been strained as I often express my self-doubt and anxiety about furniture building.\nDaily life: My anxiety has affected my ability to focus and enjoy hobbies like building furniture.\n\n6. Social Support System\nI have a good relationship with my father, who is a retired police officer, but I have not shared my feelings of anxiety and self-doubt with him.",
+            "attitude": "negative",
+            "attitude_instruction": "Clients displaying negative reactions may struggle with the therapeutic process, often showing signs of resistance or defensiveness. They might express confusion about the counselor's guidance, indicating difficulty in understanding or accepting the proposed strategies. These clients could defend their current behaviors or viewpoints, potentially shifting topics to avoid addressing the core issues. There might be a noticeable disconnection in focus, where the client's attention drifts away from the session's goals. Sarcastic responses and self-criticism or hopelessness are common, reflecting a pessimistic attitude towards their ability to change or benefit from therapy. These behaviors suggest an underlying frustration or lack of trust in the counseling process.",
+            "dialogue_history_init": "Client: I don't really know where to start, but I've been feeling a lot of anxiety and self-doubt lately, especially when it comes to my hobby of building furniture.\nCounselor: Thank you for sharing that, Travis. Can you tell me more about what specifically triggers these feelings of anxiety and self-doubt?",
+            "dialogue_history": null
+        },
+        "AI_counselor": {
+            "CBT": {
+                "client_information": "Name:\nTravis Foster\nAge:\n32\nGender:\nmale\nOccupation: House Cleaner\nEducation: High School Diploma\nMarital Status: Single\nFamily Details: Lives with father, who is a retired police officer",
+                "reason_counseling": "The constant anxiety and self-doubt affecting my hobby and daily life made me realize the need to seek counseling for support and guidance.",
+                "dialogue_history_init": "Client: I don't really know where to start, but I've been feeling a lot of anxiety and self-doubt lately, especially when it comes to my hobby of building furniture.\nCounselor: Thank you for sharing that, Travis. Can you tell me more about what specifically triggers these feelings of anxiety and self-doubt?",
+                "init_history_counselor": "ient: I don't really know where to start, but I've been feeling a lot of anxiety and self-doubt lately, especially when it comes to my hobby of building furniture.",
+                "init_history_client": "It's specifically when I can't find seasoned oak. I start to worry that anything I build will just look awful and it stops me from even starting a project."
+            },
+            "Response": {
+                "client_information": "Name:\nTravis Foster\nAge:\n32\nGender:\nmale\nOccupation: House Cleaner\nEducation: High School Diploma\nMarital Status: Single\nFamily Details: Lives with father, who is a retired police officer",
+                "reason_counseling": "The constant anxiety and self-doubt affecting my hobby and daily life made me realize the need to seek counseling for support and guidance.",
+                "cbt_plan": null,
+                "dialogue_history": null
+            }
+        },
+        "ground_truth_CBT": [
+            "Continuum Technique",
+            "Alternative Perspective"
+        ]
+    },
+    {
+        "AI_client": {
+            "intake_form": "Name:\nJennifer Foster\nAge:\n45\nGender:\nfemale\nOccupation: Veterinarian\nEducation: Doctor of Veterinary Medicine\nMarital Status: Single\nFamily Details: 3 dogs and 2 cats\n\n2. Presenting Problem\nI feel like I will never get promoted at work because I failed to treat a dog today, leading to feelings of incompetence and self-doubt.\nThese feelings started after the incident with the dog, which occurred last week.\nI believe the cause of these feelings is my deep personal investment in providing the best care for animals.\nThe problem has been on my mind constantly since the incident, affecting my confidence at work and in my abilities.\nI experience these feelings whenever I encounter a challenging case or make a mistake in my job as a veterinarian.\nI have tried to rationalize the situation and improve my skills, but the feelings persist.\n\n3. Reason for Seeking Counseling\nI decided to seek counseling after realizing that these feelings of incompetence were impacting my job performance and overall well-being.\n\n4. Past History (including medical history)\nI have not experienced similar problems before.\nI have not received treatment or counseling for psychological problems in the past.\nI do not have any significant physical illnesses.\n\n5. Academic/occupational functioning level: My job performance has been affected by my feelings of incompetence.\nInterpersonal relationships: My relationships with colleagues have been strained due to my self-doubt and lack of confidence.\nDaily life: The incident has caused me to lose sleep and affected my usual vegan diet and exercise routine.\n\n6. Social Support System\nI have supportive friends and family members I can talk to, but I have not discussed these feelings with them due to embarrassment.",
+            "attitude": "positive",
+            "attitude_instruction": "Clients demonstrate a high level of engagement and cooperation with the therapeutic process. They should actively confirm their understanding of the counselor's instructions, ask for clarifications when needed, and willingly provide detailed information about their thoughts, feelings, and behaviors. These clients make reasonable requests for additional support or resources, and they extend the conversation by building on the counselor's suggestions with their own insights or experiences. They reformulate their thoughts in a constructive manner, reflecting on their progress and expressing a hopeful outlook towards the therapeutic outcomes. Overall, their demeanor is open, appreciative, and proactive in seeking improvement.",
+            "dialogue_history_init": "Counselor: Hi Jennifer, it's nice to meet you. How are you feeling today?\nClient: Hi, I'm doing okay, I guess. I'm feeling a bit anxious about talking about all this, but I'm hoping it will help.",
+            "dialogue_history": null
+        },
+        "AI_counselor": {
+            "CBT": {
+                "client_information": "Name:\nJennifer Foster\nAge:\n45\nGender:\nfemale\nOccupation: Veterinarian\nEducation: Doctor of Veterinary Medicine\nMarital Status: Single\nFamily Details: 3 dogs and 2 cats",
+                "reason_counseling": "I decided to seek counseling after realizing that these feelings of incompetence were impacting my job performance and overall well-being.",
+                "dialogue_history_init": "Counselor: Hi Jennifer, it's nice to meet you. How are you feeling today?\nClient: Hi, I'm doing okay, I guess. I'm feeling a bit anxious about talking about all this, but I'm hoping it will help.",
+                "init_history_counselor": "Hi Jennifer, it's nice to meet you. How are you feeling today?",
+                "init_history_client": "I'm feeling a bit anxious about talking about all this, but I'm hoping it will help."
+            },
+            "Response": {
+                "client_information": "Name:\nJennifer Foster\nAge:\n45\nGender:\nfemale\nOccupation: Veterinarian\nEducation: Doctor of Veterinary Medicine\nMarital Status: Single\nFamily Details: 3 dogs and 2 cats",
+                "reason_counseling": "I decided to seek counseling after realizing that these feelings of incompetence were impacting my job performance and overall well-being.",
+                "cbt_plan": null,
+                "dialogue_history": null
+            }
+        },
+        "ground_truth_CBT": [
+            "Decatastrophizing"
+        ]
+    },
+    {
+        "AI_client": {
+            "intake_form": "Name:\nJennifer Foster\nAge:\n45\nGender:\nfemale\nOccupation: Veterinarian\nEducation: Doctor of Veterinary Medicine\nMarital Status: Single\nFamily Details: 3 dogs and 2 cats\n\n2. Presenting Problem\nI feel like I will never get promoted at work because I failed to treat a dog today, leading to feelings of incompetence and self-doubt.\nThese feelings started after the incident with the dog, which occurred last week.\nI believe the cause of these feelings is my deep personal investment in providing the best care for animals.\nThe problem has been on my mind constantly since the incident, affecting my confidence at work and in my abilities.\nI experience these feelings whenever I encounter a challenging case or make a mistake in my job as a veterinarian.\nI have tried to rationalize the situation and improve my skills, but the feelings persist.\n\n3. Reason for Seeking Counseling\nI decided to seek counseling after realizing that these feelings of incompetence were impacting my job performance and overall well-being.\n\n4. Past History (including medical history)\nI have not experienced similar problems before.\nI have not received treatment or counseling for psychological problems in the past.\nI do not have any significant physical illnesses.\n\n5. Academic/occupational functioning level: My job performance has been affected by my feelings of incompetence.\nInterpersonal relationships: My relationships with colleagues have been strained due to my self-doubt and lack of confidence.\nDaily life: The incident has caused me to lose sleep and affected my usual vegan diet and exercise routine.\n\n6. Social Support System\nI have supportive friends and family members I can talk to, but I have not discussed these feelings with them due to embarrassment.",
+            "attitude": "neutral",
+            "attitude_instruction": "Clients display a mix of both positive and negative characteristics. They might show compliance and willingness to follow instructions at times, but also exhibit moments of defensiveness or skepticism. These clients may provide useful information and participate actively in some discussions, while in other instances, they might shift topics or show disconnection. Their feedback can vary, with periods of constructive engagement interspersed with sarcastic remarks or expressions of self-doubt. This blend of reactions indicates a fluctuating commitment to therapy, with the client balancing between optimism for change and resistance to the therapeutic process.",
+            "dialogue_history_init": "Counselor: Hi Jennifer, it's good to meet you. How are you doing today?\nClient: Hi. I'm doing alright, I guess. A bit tired, to be honest.",
+            "dialogue_history": null
+        },
+        "AI_counselor": {
+            "CBT": {
+                "client_information": "Name:\nJennifer Foster\nAge:\n45\nGender:\nfemale\nOccupation: Veterinarian\nEducation: Doctor of Veterinary Medicine\nMarital Status: Single\nFamily Details: 3 dogs and 2 cats",
+                "reason_counseling": "I decided to seek counseling after realizing that these feelings of incompetence were impacting my job performance and overall well-being.",
+                "dialogue_history_init": "Counselor: Hi Jennifer, it's good to meet you. How are you doing today?\nClient: Hi. I'm doing alright, I guess. A bit tired, to be honest.",
+                "init_history_counselor": "Hi Jennifer, it's good to meet you. How are you doing today?",
+                "init_history_client": "I've been feeling really down since I failed to treat that dog last week. It just keeps replaying in my mind, and I can't shake the feeling that I'm not good enough at my job."
+            },
+            "Response": {
+                "client_information": "Name:\nJennifer Foster\nAge:\n45\nGender:\nfemale\nOccupation: Veterinarian\nEducation: Doctor of Veterinary Medicine\nMarital Status: Single\nFamily Details: 3 dogs and 2 cats",
+                "reason_counseling": "I decided to seek counseling after realizing that these feelings of incompetence were impacting my job performance and overall well-being.",
+                "cbt_plan": null,
+                "dialogue_history": null
+            }
+        },
+        "ground_truth_CBT": [
+            "Decatastrophizing"
+        ]
+    },
+    {
+        "AI_client": {
+            "intake_form": "Name:\nJennifer Foster\nAge:\n45\nGender:\nfemale\nOccupation: Veterinarian\nEducation: Doctor of Veterinary Medicine\nMarital Status: Single\nFamily Details: 3 dogs and 2 cats\n\n2. Presenting Problem\nI feel like I will never get promoted at work because I failed to treat a dog today, leading to feelings of incompetence and self-doubt.\nThese feelings started after the incident with the dog, which occurred last week.\nI believe the cause of these feelings is my deep personal investment in providing the best care for animals.\nThe problem has been on my mind constantly since the incident, affecting my confidence at work and in my abilities.\nI experience these feelings whenever I encounter a challenging case or make a mistake in my job as a veterinarian.\nI have tried to rationalize the situation and improve my skills, but the feelings persist.\n\n3. Reason for Seeking Counseling\nI decided to seek counseling after realizing that these feelings of incompetence were impacting my job performance and overall well-being.\n\n4. Past History (including medical history)\nI have not experienced similar problems before.\nI have not received treatment or counseling for psychological problems in the past.\nI do not have any significant physical illnesses.\n\n5. Academic/occupational functioning level: My job performance has been affected by my feelings of incompetence.\nInterpersonal relationships: My relationships with colleagues have been strained due to my self-doubt and lack of confidence.\nDaily life: The incident has caused me to lose sleep and affected my usual vegan diet and exercise routine.\n\n6. Social Support System\nI have supportive friends and family members I can talk to, but I have not discussed these feelings with them due to embarrassment.",
+            "attitude": "negative",
+            "attitude_instruction": "Clients displaying negative reactions may struggle with the therapeutic process, often showing signs of resistance or defensiveness. They might express confusion about the counselor's guidance, indicating difficulty in understanding or accepting the proposed strategies. These clients could defend their current behaviors or viewpoints, potentially shifting topics to avoid addressing the core issues. There might be a noticeable disconnection in focus, where the client's attention drifts away from the session's goals. Sarcastic responses and self-criticism or hopelessness are common, reflecting a pessimistic attitude towards their ability to change or benefit from therapy. These behaviors suggest an underlying frustration or lack of trust in the counseling process.",
+            "dialogue_history_init": "Counselor: Hi Jennifer, I'm glad you decided to come in today. How are you feeling?\nClient: Honestly, not great. I\u2019ve been really stressed and feeling completely inadequate at my job.",
+            "dialogue_history": null
+        },
+        "AI_counselor": {
+            "CBT": {
+                "client_information": "Name:\nJennifer Foster\nAge:\n45\nGender:\nfemale\nOccupation: Veterinarian\nEducation: Doctor of Veterinary Medicine\nMarital Status: Single\nFamily Details: 3 dogs and 2 cats",
+                "reason_counseling": "I decided to seek counseling after realizing that these feelings of incompetence were impacting my job performance and overall well-being.",
+                "dialogue_history_init": "Counselor: Hi Jennifer, I'm glad you decided to come in today. How are you feeling?\nClient: Honestly, not great. I\u2019ve been really stressed and feeling completely inadequate at my job.",
+                "init_history_counselor": "Hi Jennifer, I'm glad you decided to come in today. How are you feeling?",
+                "init_history_client": "I\u2019ve been really stressed and feeling completely inadequate at my job."
+            },
+            "Response": {
+                "client_information": "Name:\nJennifer Foster\nAge:\n45\nGender:\nfemale\nOccupation: Veterinarian\nEducation: Doctor of Veterinary Medicine\nMarital Status: Single\nFamily Details: 3 dogs and 2 cats",
+                "reason_counseling": "I decided to seek counseling after realizing that these feelings of incompetence were impacting my job performance and overall well-being.",
+                "cbt_plan": null,
+                "dialogue_history": null
+            }
+        },
+        "ground_truth_CBT": [
+            "Decatastrophizing"
+        ]
+    },
+    {
+        "AI_client": {
+            "intake_form": "Name:\nMaven Victoria\nAge:\n21\nGender:\nfemale\nOccupation: English Literature Tutor\nEducation: Master's Degree in English Literature\nMarital Status: Single\nFamily Details: Lives with her sister who is a guitarist\n\n2. Presenting Problem\nI feel inadequate because my sister plays the guitar, and I believe she thinks less of me because I cannot play an instrument.\nThese feelings of inadequacy started a few months ago when my sister started her guitar lessons.\nI believe the cause is my comparison of our talents and abilities.\nThe problem has progressed to the point where I avoid family gatherings or any situations where music is involved.\nI experience these feelings whenever music or instruments are mentioned, leading to feelings of insecurity.\nI have attempted to learn the guitar to alleviate these feelings, but my progress has been slow.\n\n3. Reason for Seeking Counseling\nI recognized that these feelings were impacting my self-esteem and social interactions, prompting me to seek counseling for support.\n\n4. Past History (including medical history)\nI have not experienced similar problems before.\nI have not sought treatment or counseling for psychological issues in the past.\nI do not have any significant physical illnesses.\n\n5. Academic/occupational functioning level: My job performance as an English Literature tutor has been affected due to my decreased self-esteem.\nInterpersonal relationships: My relationship with my sister has been strained due to my feelings of inadequacy.\nDaily life: My avoidance of situations involving music has disrupted my daily routines and activities.\n\n6. Social Support System\nI have a close friend I can confide in, but I have not discussed these specific feelings of inadequacy with them.",
+            "attitude": "positive",
+            "attitude_instruction": "Clients demonstrate a high level of engagement and cooperation with the therapeutic process. They should actively confirm their understanding of the counselor's instructions, ask for clarifications when needed, and willingly provide detailed information about their thoughts, feelings, and behaviors. These clients make reasonable requests for additional support or resources, and they extend the conversation by building on the counselor's suggestions with their own insights or experiences. They reformulate their thoughts in a constructive manner, reflecting on their progress and expressing a hopeful outlook towards the therapeutic outcomes. Overall, their demeanor is open, appreciative, and proactive in seeking improvement.",
+            "dialogue_history_init": "Counselor: Hello Maven, welcome to our session today. It\u2019s great to have you here. How are you feeling about starting this process?\nClient: Hi, I\u2019m feeling a bit nervous, honestly. But I guess it\u2019s a good kind of nervous because I really want to work through these feelings.",
+            "dialogue_history": null
+        },
+        "AI_counselor": {
+            "CBT": {
+                "client_information": "Name:\nMaven Victoria\nAge:\n21\nGender:\nfemale\nOccupation: English Literature Tutor\nEducation: Master's Degree in English Literature\nMarital Status: Single\nFamily Details: Lives with her sister who is a guitarist",
+                "reason_counseling": "I recognized that these feelings were impacting my self-esteem and social interactions, prompting me to seek counseling for support.",
+                "dialogue_history_init": "Counselor: Hello Maven, welcome to our session today. It\u2019s great to have you here. How are you feeling about starting this process?\nClient: Hi, I\u2019m feeling a bit nervous, honestly. But I guess it\u2019s a good kind of nervous because I really want to work through these feelings.",
+                "init_history_counselor": "Hello Maven, welcome to our session today. It\u2019s great to have you here. How are you feeling about starting this process?",
+                "init_history_client": "I\u2019m feeling a bit anxious, but I know that working through these feelings is important for me. I\u2019ve been feeling really inadequate lately, especially compared to my sister who is learning the guitar. It\u2019s affecting my self-esteem and even my job performance. I\u2019m hoping we can explore why I feel this way and how to overcome it."
+            },
+            "Response": {
+                "client_information": "Name:\nMaven Victoria\nAge:\n21\nGender:\nfemale\nOccupation: English Literature Tutor\nEducation: Master's Degree in English Literature\nMarital Status: Single\nFamily Details: Lives with her sister who is a guitarist",
+                "reason_counseling": "I recognized that these feelings were impacting my self-esteem and social interactions, prompting me to seek counseling for support.",
+                "cbt_plan": null,
+                "dialogue_history": null
+            }
+        },
+        "ground_truth_CBT": [
+            "Evidence-Based Questioning",
+            "Alternative Perspective"
+        ]
+    }
+]
