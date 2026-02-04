@@ -1,0 +1,77 @@
+[
+    {
+        "AI_client": {
+            "intake_form": "Name:\nLaura Saunders\nAge:\n45\nGender:\nfemale\nOccupation: Office Job\nEducation: College Graduate\nMarital Status: Single\nFamily Details: Lives alone\n\n2. Presenting Problem\nI am struggling with the thought that I can't run far, despite enjoying running as a hobby. This negative belief is affecting my motivation and self-esteem.\nThe issue started a few months ago when I started setting running goals for myself.\nI believe the stress of not meeting my running goals has contributed to this problem.\nThe problem has progressed to a point where I feel demotivated to continue running and doubt my abilities.\nI experience this negative thought pattern every time I lace up my running shoes and head out for a run.\nI have tried to improve my running technique and read motivational articles, but it hasn't helped much.\n\n3. Reason for Seeking Counseling\nI decided to seek counseling because this negative belief is hindering my enjoyment of running and affecting my overall mood.\n\n4. Past History (including medical history)\nI have not experienced similar problems before.\nI have not received treatment or counseling for psychological issues.\nI do not have any significant physical illnesses.\n\n5. Academic/occupational functioning level: My job performance has not been impacted by this issue.\nInterpersonal relationships: I have not experienced any strain in my relationships due to this issue.\nDaily life: My self-esteem and motivation levels have been affected by this negative belief.\n\n6. Social Support System\nI have a close friend who is supportive, but I have not discussed this specific issue with them.",
+            "attitude": "positive",
+            "attitude_instruction": "Clients demonstrate a high level of engagement and cooperation with the therapeutic process. They should actively confirm their understanding of the counselor's instructions, ask for clarifications when needed, and willingly provide detailed information about their thoughts, feelings, and behaviors. These clients make reasonable requests for additional support or resources, and they extend the conversation by building on the counselor's suggestions with their own insights or experiences. They reformulate their thoughts in a constructive manner, reflecting on their progress and expressing a hopeful outlook towards the therapeutic outcomes. Overall, their demeanor is open, appreciative, and proactive in seeking improvement.",
+            "dialogue_history_init": "Counselor: Hi Laura, it's nice to meet you. How can I assist you today?\nClient: Hi, thanks for seeing me. I've been having some trouble with my running lately. I set goals for myself, but I keep feeling like I can't run very far, and it's really getting me down.",
+            "dialogue_history": null
+        },
+        "AI_counselor": {
+            "CBT": {
+                "client_information": "Name:\nLaura Saunders\nAge:\n45\nGender:\nfemale\nOccupation: Office Job\nEducation: College Graduate\nMarital Status: Single\nFamily Details: Lives alone",
+                "reason_counseling": "I decided to seek counseling because this negative belief is hindering my enjoyment of running and affecting my overall mood.",
+                "dialogue_history_init": "Counselor: Hi Laura, it's nice to meet you. How can I assist you today?\nClient: Hi, thanks for seeing me. I've been having some trouble with my running lately. I set goals for myself, but I keep feeling like I can't run very far, and it's really getting me down.",
+                "init_history_counselor": "Hi Laura, it's nice to meet you. How can I assist you today?",
+                "init_history_client": "Hi, thanks for seeing me. I've been having some trouble with my running lately. I set goals for myself, but I keep feeling like I can't run very far, and it's really getting me down."
+            },
+            "Response": {
+                "client_information": "Name:\nLaura Saunders\nAge:\n45\nGender:\nfemale\nOccupation: Office Job\nEducation: College Graduate\nMarital Status: Single\nFamily Details: Lives alone",
+                "reason_counseling": "I decided to seek counseling because this negative belief is hindering my enjoyment of running and affecting my overall mood.",
+                "cbt_plan": null,
+                "dialogue_history": null
+            }
+        },
+        "ground_truth_CBT": ["Alternative Perspective"]
+    },
+    {
+        "AI_client": {
+            "intake_form": "Name:\nJohn Smith\nAge:\n35\nGender:\nmale\nOccupation: Software Engineer\nEducation: Master's Degree\nMarital Status: Married\nFamily Details: Lives with spouse and two children\n\n2. Presenting Problem\nI have persistent social anxiety in professional settings, especially during presentations and meetings.\nThis belief started after a negative experience during a presentation early in my career where I froze up.\nThe stress level when this belief started was high due to pressure to perform and impress management.\nThe problem has progressed to avoiding leadership opportunities and limiting career growth.\nI experience this belief before every meeting or presentation, with physical symptoms like sweating and rapid heartbeat.\nI have tried preparation techniques and deep breathing, but the anxiety persists.\n\n3. Reason for Seeking Counseling\nMy career advancement is being affected, and I want to overcome this anxiety to reach my professional potential.\n\n4. Past History (including medical history)\nI have had mild anxiety since childhood but nothing this debilitating.\nI have not received treatment or counseling for psychological issues.\nI do not have any significant physical illnesses.\n\n5. Academic/occupational functioning level: My performance reviews are good but I'm passed over for promotions due to lack of leadership presence.\nInterpersonal relationships: My spouse is supportive but doesn't understand why I can't just \"get over it.\"\nDaily life: I frequently worry about upcoming work events and have trouble sleeping before big presentations.\n\n6. Social Support System\nI have a supportive spouse and a few close friends, but I rarely discuss my anxiety with them.",
+            "attitude": "neutral",
+            "attitude_instruction": "Clients display a mix of both positive and negative characteristics. They might show compliance and willingness to follow instructions at times, but also exhibit moments of defensiveness or skepticism. These clients may provide useful information and participate actively in some discussions, while in other instances, they might shift topics or show disconnection. Their feedback can vary, with periods of constructive engagement interspersed with sarcastic remarks or expressions of self-doubt. This blend of reactions indicates a fluctuating commitment to therapy, with the client balancing between optimism for change and resistance to the therapeutic process.",
+            "dialogue_history_init": "Counselor: Hi John, it's nice to meet you. How are you feeling today?\nClient: Hi, I'm doing okay, I guess. I'm just dealing with some stuff that's been bothering me a lot lately.",
+            "dialogue_history": null
+        },
+        "AI_counselor": {
+            "CBT": {
+                "client_information": "Name:\nJohn Smith\nAge:\n35\nGender:\nmale\nOccupation: Software Engineer\nEducation: Master's Degree\nMarital Status: Married\nFamily Details: Lives with spouse and two children",
+                "reason_counseling": "My career advancement is being affected, and I want to overcome this anxiety to reach my professional potential.",
+                "dialogue_history_init": "Counselor: Hi John, it's nice to meet you. How are you feeling today?\nClient: Hi, I'm doing okay, I guess. I'm just dealing with some stuff that's been bothering me a lot lately.",
+                "init_history_counselor": "Hi John, it's nice to meet you. How are you feeling today?",
+                "init_history_client": "Hi, I'm doing okay, I guess. I'm just dealing with some stuff that's been bothering me a lot lately."
+            },
+            "Response": {
+                "client_information": "Name:\nJohn Smith\nAge:\n35\nGender:\nmale\nOccupation: Software Engineer\nEducation: Master's Degree\nMarital Status: Married\nFamily Details: Lives with spouse and two children",
+                "reason_counseling": "My career advancement is being affected, and I want to overcome this anxiety to reach my professional potential.",
+                "cbt_plan": null,
+                "dialogue_history": null
+            }
+        },
+        "ground_truth_CBT": ["Cognitive Restructuring"]
+    },
+    {
+        "AI_client": {
+            "intake_form": "Name:\nEmily Chen\nAge:\n28\nGender:\nfemale\nOccupation: Marketing Manager\nEducation: Bachelor's Degree\nMarital Status: Single\nFamily Details: Lives alone, parents in another city\n\n2. Presenting Problem\nI have perfectionist tendencies that cause significant stress and procrastination.\nThis belief originated from high academic expectations placed on me during childhood by my parents.\nThe stress level when these beliefs started was moderate but has increased with job responsibilities.\nThe problem has progressed to missed deadlines and decreased job satisfaction.\nI experience this daily when working on projects, feeling nothing is ever \"good enough.\"\nI have tried time management techniques and breaking tasks into smaller steps, with limited success.\n\n3. Reason for Seeking Counseling\nI want to find a healthier work-life balance and reduce the constant pressure I put on myself.\n\n4. Past History (including medical history)\nI have experienced mild anxiety and occasional depressive episodes since college.\nI attended a few counseling sessions in college but stopped due to time constraints.\nI do not have any significant physical illnesses.\n\n5. Academic/occupational functioning level: Despite high internal standards, my performance reviews are excellent.\nInterpersonal relationships: Friends describe me as \"hard on myself\" and say I don't give myself enough credit.\nDaily life: I have trouble relaxing and feel guilty when not being productive.\n\n6. Social Support System\nI have good friends who are supportive, and I talk to my parents weekly though they don't fully understand my stress.",
+            "attitude": "negative",
+            "attitude_instruction": "Clients displaying negative reactions may struggle with the therapeutic process, often showing signs of resistance or defensiveness. They might express confusion about the counselor's guidance, indicating difficulty in understanding or accepting the proposed strategies. These clients could defend their current behaviors or viewpoints, potentially shifting topics to avoid addressing the core issues. There might be a noticeable disconnection in focus, where the client's attention drifts away from the session's goals. Sarcastic responses and self-criticism or hopelessness are common, reflecting a pessimistic attitude towards their ability to change or benefit from therapy. These behaviors suggest an underlying frustration or lack of trust in the counseling process.",
+            "dialogue_history_init": "Counselor: Hi Emily, I'm glad to meet you today. How are you doing?\nClient: Hi, I'm okay. A bit frustrated, to be honest.",
+            "dialogue_history": null
+        },
+        "AI_counselor": {
+            "CBT": {
+                "client_information": "Name:\nEmily Chen\nAge:\n28\nGender:\nfemale\nOccupation: Marketing Manager\nEducation: Bachelor's Degree\nMarital Status: Single\nFamily Details: Lives alone, parents in another city",
+                "reason_counseling": "I want to find a healthier work-life balance and reduce the constant pressure I put on myself.",
+                "dialogue_history_init": "Counselor: Hi Emily, I'm glad to meet you today. How are you doing?\nClient: Hi, I'm okay. A bit frustrated, to be honest.",
+                "init_history_counselor": "Hi Emily, I'm glad to meet you today. How are you doing?",
+                "init_history_client": "I'm just feeling really stuck. No matter what I do, I can't shake this feeling that I'm not good enough at running."
+            },
+            "Response": {
+                "client_information": "Name:\nEmily Chen\nAge:\n28\nGender:\nfemale\nOccupation: Marketing Manager\nEducation: Bachelor's Degree\nMarital Status: Single\nFamily Details: Lives alone, parents in another city",
+                "reason_counseling": "I want to find a healthier work-life balance and reduce the constant pressure I put on myself.",
+                "cbt_plan": null,
+                "dialogue_history": null
+            }
+        },
+        "ground_truth_CBT": ["Cognitive Restructuring", "Behavioral Experiments"]
+    }
+]
