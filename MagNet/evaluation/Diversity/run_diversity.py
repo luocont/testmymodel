@@ -166,13 +166,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "-i", "--input_dir",
         type=str,
-        default="../output-cn",
+        default="../../output-cn",
         help="包含 session_*.json 文件的输入目录"
     )
     parser.add_argument(
         "-o", "--output_file",
         type=str,
-        default="../output-diversity/diversity_results.json",
+        default="../../output-diversity/diversity_results.json",
         help="输出结果文件路径"
     )
 
