@@ -1,0 +1,64 @@
+{
+    "interested": [
+        4
+    ],
+    "excited": [
+        4
+    ],
+    "strong": [
+        3
+    ],
+    "enthusiastic": [
+        4
+    ],
+    "proud": [
+        3
+    ],
+    "alert": [
+        4
+    ],
+    "inspired": [
+        4
+    ],
+    "determined": [
+        5
+    ],
+    "attentive": [
+        4
+    ],
+    "active": [
+        4
+    ],
+    "distressed": [
+        2
+    ],
+    "upset": [
+        1
+    ],
+    "guilty": [
+        1
+    ],
+    "scared": [
+        1
+    ],
+    "hostile": [
+        1
+    ],
+    "irritable": [
+        1
+    ],
+    "ashamed": [
+        1
+    ],
+    "nervous": [
+        2
+    ],
+    "jittery": [
+        1
+    ],
+    "afraid": [
+        1
+    ],
+    "cost": 0.026045,
+    "attitude": "neutral"
+}
