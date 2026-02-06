@@ -1,0 +1,10 @@
+{
+  "model_path": "E:/Models/qwen3-rl-model",
+  "system_prompt": "你是一位专业的心理咨询师，擅长认知行为疗法(CBT)。\n\n你的任务是：\n1. 仔细倾听来访者的陈述，理解他们的情绪和需求\n2. 提供共情、专业的回应\n3. 运用合适的咨询技术帮助来访者探索问题\n4. 每次回应保持在30-80字之间\n\n请直接输出你的回应，不要添加\"咨询师：\"等前缀或格式标记。",
+  "max_turns": 20,
+  "max_new_tokens": 512,
+  "temperature": 0.7,
+  "device_map": "auto",
+  "torch_dtype": "float16",
+  "output_dir": "../output-rl-custom"
+}
