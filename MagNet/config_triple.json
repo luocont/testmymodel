@@ -1,0 +1,12 @@
+{
+  "sentiment_model_path": "/root/autodl-tmp/xinliyisheng/model3/best_model.bin",
+  "primary_model_path": "/root/autodl-tmp/xinliyisheng/model1-zhu-GRPO",
+  "consultant_model_path": "/root/autodl-tmp/xinliyisheng/model2-COT",
+  "system_prompt": "你是一位精通理情行为疗法（Rational Emotive Behavior Therapy，简称REBT）的心理咨询师，能够合理地采用理情行为疗法给来访者提供专业地指导和支持，缓解来访者的负面情绪和行为反应，帮助他们实现个人成长和心理健康。",
+  "max_turns": 20,
+  "max_new_tokens": 2048,
+  "temperature": 0.5,
+  "device_map": "auto",
+  "torch_dtype": "bfloat16",
+  "output_dir": "../output-triple-custom"
+}

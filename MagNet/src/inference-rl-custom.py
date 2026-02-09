@@ -21,7 +21,21 @@ import multiprocessing
 import traceback
 import os
 from pathlib import Path
-from langchain.prompts import PromptTemplate
+
+
+class PromptTemplate:
+    """简单的提示词模板类（替代 langchain.prompts.PromptTemplate）"""
+
+    def __init__(self, input_variables, template):
+        self.input_variables = input_variables
+        self.template = template
+
+    def format(self, **kwargs):
+        result = self.template
+        for var in self.input_variables:
+            if var in kwargs:
+                result = result.replace(f"{{{var}}}", str(kwargs[var]))
+        return result
 
 # 导入通用 LLM 客户端（用于 Client Agent）
 from llm_client import create_client_from_env

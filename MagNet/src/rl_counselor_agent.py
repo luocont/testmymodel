@@ -211,34 +211,32 @@ class RLCounselorAgent(Agent):
         # 重试循环
         for attempt in range(max_retries):
             try:
-                # 编码输入
-                inputs = self.tokenizer(
-                    [text],
-                    return_tensors="pt",
-                    padding=True,
-                    truncation=True,
-                    max_length=4096
-                ).to(self.model.device)
+                # 编码输入（与 InternLM2 官方示例对齐）
+                inputs = self.tokenizer([text], return_tensors="pt")
+
+                # 将输入移到模型设备（与官方示例对齐）
+                for k, v in inputs.items():
+                    inputs[k] = v.to(self.model.device)
+
+                # 记录输入长度，用于提取生成的部分
+                input_length = inputs['input_ids'].shape[1]
+
+                # 生成参数（与官方示例对齐）
+                # 官方: {"max_length": 128, "top_p": 0.8, "temperature": 0.8, "do_sample": True, "repetition_penalty": 1.0}
+                gen_kwargs = {
+                    "max_new_tokens": max_tokens,
+                    "top_p": 0.8,
+                    "temperature": temp,
+                    "do_sample": temp > 0,
+                    "repetition_penalty": 1.0
+                }
 
                 # 生成响应
                 with torch.no_grad():
-                    outputs = self.model.generate(
-                        **inputs,
-                        max_new_tokens=max_tokens,
-                        temperature=temp,
-                        do_sample=temp > 0,
-                        top_p=0.9,
-                        top_k=50,
-                        pad_token_id=self.tokenizer.pad_token_id,
-                        eos_token_id=self.tokenizer.eos_token_id,
-                        repetition_penalty=1.1
-                    )
+                    outputs = self.model.generate(**inputs, **gen_kwargs)
 
-                # 解码响应（只取新生成的部分）
-                response = self.tokenizer.decode(
-                    outputs[0][inputs['input_ids'].shape[1]:],
-                    skip_special_tokens=True
-                )
+                # 解码响应：只取新生成的部分（跳过输入部分）
+                response = self.tokenizer.decode(outputs[0][input_length:].tolist(), skip_special_tokens=True)
 
                 # 清理响应
                 response = response.strip()
