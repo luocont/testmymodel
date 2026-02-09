@@ -199,14 +199,10 @@ class RLTherapySession:
             # 来访者回应（使用框架原有 Client Agent）
             client_response = self.client_agent.generate(self.history)
             client_response = client_response.replace('Client: ', '')
+            # 移除 [/END] 标记（不中断对话，确保进行满20轮）
+            client_response = client_response.replace('[/END]', '')
             self._add_to_history("client", client_response)
             print(f"      来访者: {client_response[:40]}{'...' if len(client_response) > 40 else ''}")
-
-            # 检查结束标记
-            if '[/END]' in client_response:
-                self.history[-1]['message'] = self.history[-1]['message'].replace('[/END]', '')
-                print("    检测到结束标记，会话结束")
-                break
 
     def run_session(self):
         """运行完整会话"""

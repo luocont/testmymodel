@@ -505,13 +505,10 @@ class TherapySession:
             self.cost = self.cost + cost_utt
             client_statement = self.client_agent.generate(self.history)
             client_statement = client_statement.replace('Client: ', '')
+            # 移除 [/END] 标记（不中断对话，确保进行满20轮）
+            client_statement = client_statement.replace('[/END]', '')
 
             self._add_to_history("client", client_statement)
-
-            if '[/END]' in client_statement:
-                self.history[-1]['message'] = self.history[-1][
-                    'message'].replace('[/END]', '')
-                break
 
     def run_session(self):
         self._initialize_session()

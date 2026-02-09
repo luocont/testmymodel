@@ -333,15 +333,13 @@ def run_therapy_session(index, example, output_dir, total, max_turns,
             if client_response.startswith("Client:"):
                 client_response = client_response.split("Client:", 1)[-1].strip()
 
+            # 移除 [/END] 标记（不中断对话，确保进行满20轮）
+            client_response = client_response.replace('[/END]', '')
+
             history.append({
                 "role": "client",
                 "message": client_response
             })
-
-            # 检查是否结束
-            if '[/END]' in client_response:
-                history[-1]['message'] = history[-1]['message'].replace('[/END]', '')
-                break
 
         # 准备输出数据
         session_data = {
