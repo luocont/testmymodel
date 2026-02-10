@@ -3,13 +3,15 @@
 
 整合情感分类模型、顾问模型和主模型的联动逻辑
 用于生成心理咨询对话
+
+基于 Gradio 应用的三模型联动逻辑重构
 """
 
 import torch
 import torch.nn as nn
 from transformers import BertTokenizer, BertModel, AutoTokenizer, AutoModelForCausalLM
 import re
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple
 from pathlib import Path
 
 
@@ -20,9 +22,9 @@ from pathlib import Path
 class SentimentClassifier(nn.Module):
     """基于BERT的情感分类模型"""
 
-    def __init__(self, n_classes=3, bert_model_name='bert-base-chinese'):
+    def __init__(self, bert: BertModel, n_classes=3):
         super().__init__()
-        self.bert = BertModel.from_pretrained(bert_model_name)
+        self.bert = bert
         self.drop = nn.Dropout(0.3)
         self.fc1 = nn.Linear(self.bert.config.hidden_size, 256)
         self.act = nn.ReLU()
@@ -37,6 +39,12 @@ class SentimentClassifier(nn.Module):
         return self.fc2(x)
 
 
+class NeutralSentimentStub:
+    """降级占位：情感模型加载失败时使用，永远返回中性"""
+    def eval(self): return self
+    def to(self, *_args, **_kwargs): return self
+
+
 # ================================
 # Part 2: 大语言模型交互器
 # ================================
@@ -44,41 +52,96 @@ class SentimentClassifier(nn.Module):
 class LLMInteractor:
     """大语言模型加载器和交互器"""
 
-    def __init__(self, model_path: str, device_map: str = "auto", torch_dtype: str = "bfloat16"):
+    def __init__(self, model_path: str, torch_dtype: str = "auto"):
         """
         初始化大语言模型
 
         Args:
             model_path: 模型路径
-            device_map: 设备映射
-            torch_dtype: 数据类型 (float16, bfloat16, float32)
+            torch_dtype: 数据类型 ("auto", "float16", "bfloat16", "float32")
         """
         print(f"正在从 '{model_path}' 加载大语言模型...")
 
-        # 转换数据类型
-        dtype_map = {
-            "float16": torch.float16,
-            "bfloat16": torch.bfloat16,
-            "float32": torch.float32
-        }
-        dtype = dtype_map.get(torch_dtype, torch.bfloat16)
-
         try:
+            # 获取 GPU 总显存，设置 max_memory 防止 CPU 卸载
+            import torch
+            max_memory = None
+            if torch.cuda.is_available():
+                gpu_memory = torch.cuda.get_device_properties(0).total_memory
+                max_memory = {
+                    0: int(gpu_memory * 0.95),  # 使用 95% 的显存
+                    "cpu": 0  # 不使用 CPU 内存
+                }
+
+            # 使用 "auto" dtype 以适配不同设备/权重
             self.model = AutoModelForCausalLM.from_pretrained(
                 model_path,
-                torch_dtype=dtype,
-                device_map=device_map,
-                trust_remote_code=True
+                torch_dtype=torch_dtype,
+                device_map="auto",
+                trust_remote_code=True,
+                max_memory=max_memory,
+                low_cpu_mem_usage=True
             ).eval()
             self.tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
-            print(f"✅ 大语言模型 '{model_path}' 加载成功！")
+
+            # 设置 pad_token
+            if self.tokenizer.pad_token is None:
+                if self.tokenizer.eos_token is not None:
+                    self.tokenizer.pad_token = self.tokenizer.eos_token
+                else:
+                    self.tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+
+            # 获取设备
+            if hasattr(self.model, 'device'):
+                self.device = self.model.device
+            else:
+                self.device = next(self.model.parameters()).device
+
+            # 验证设备是 CUDA
+            if self.device.type != "cuda":
+                print(f"[警告] 模型不在 CUDA 设备上，当前设备: {self.device}")
+                # 如果不在 GPU 上，尝试移到 GPU
+                try:
+                    if torch.cuda.is_available():
+                        self.model = self.model.to("cuda")
+                        self.device = torch.device("cuda")
+                        print(f"[已修复] 已将模型移至 CUDA")
+                except Exception as e:
+                    print(f"[错误] 移动模型到 CUDA 失败: {e}")
+
+            print(f"✅ 大语言模型 '{model_path}' 加载成功！设备: {self.device}")
         except Exception as e:
             print(f"加载大语言模型 '{model_path}' 时出错: {e}")
             raise
 
 
 # ================================
-# Part 3: 三联动模型 Agent
+# Part 3: 思考过程提取
+# ================================
+
+def extract_thinking_process(raw_text: str) -> str:
+    """从顾问模型输出中提取思考过程"""
+    # 匹配完整的 <think>...</thinking> 标签
+    match_full = re.search(r"<think>(.*?)</thinking>", raw_text, re.DOTALL)
+    if match_full:
+        return match_full.group(1).strip()
+
+    # 匹配只有 </thinking> 的情况
+    match_close_only = re.search(r"(.*?)</thinking>", raw_text, re.DOTALL)
+    if match_close_only:
+        return match_close_only.group(1).strip()
+
+    # 匹配只有 <think> 的情况
+    match_open_only = re.search(r"<think>(.*)", raw_text, re.DOTALL)
+    if match_open_only:
+        return match_open_only.group(1).strip()
+
+    print("警告: 在顾问模型的输出中未找到任何 <think> 或 </thinking> 标签。")
+    return ""
+
+
+# ================================
+# Part 4: 三联动模型 Agent
 # ================================
 
 class TripleModelAgent:
@@ -97,10 +160,9 @@ class TripleModelAgent:
         system_prompt: Optional[str] = None,
         max_new_tokens: int = 2048,
         temperature: float = 0.5,
-        device_map: str = "auto",
-        torch_dtype: str = "bfloat16",
         bert_model_name: str = 'bert-base-chinese',
-        max_sentiment_len: int = 128
+        max_sentiment_len: int = 128,
+        n_sentiment_classes: int = 2
     ):
         """
         初始化三联动模型 Agent
@@ -113,143 +175,155 @@ class TripleModelAgent:
             system_prompt: 主模型系统提示词
             max_new_tokens: 最大生成token数
             temperature: 采样温度
-            device_map: 设备映射
-            torch_dtype: 数据类型
             bert_model_name: BERT模型名称
             max_sentiment_len: 情感分析最大长度
+            n_sentiment_classes: 情感分类数量 (2: 消极/积极, 3: 消极/中性/积极)
         """
         self.example = example
         self.system_prompt = system_prompt
         self.max_new_tokens = max_new_tokens
         self.temperature = temperature
         self.max_sentiment_len = max_sentiment_len
+        self.n_sentiment_classes = n_sentiment_classes
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
         # 加载情感分类模型
-        print(f"正在加载情感分类模型...")
-        self.sentiment_model = SentimentClassifier(n_classes=3, bert_model_name=bert_model_name)
+        print(f"正在加载情感分类模型 ({n_sentiment_classes}类)...")
         try:
-            ckpt = torch.load(sentiment_model_path, map_location=self.device)
-            self.sentiment_model.load_state_dict(ckpt.get('model_state', ckpt))
-            self.sentiment_model.to(self.device)
-            self.sentiment_model.eval()
-            self.sentiment_tokenizer = BertTokenizer.from_pretrained(bert_model_name)
+            bert, tokenizer = self._load_bert_and_tokenizer(bert_model_name)
+            self.sentiment_model = SentimentClassifier(bert=bert, n_classes=n_sentiment_classes)
+
+            ckpt = torch.load(sentiment_model_path, map_location='cpu')
+            state = ckpt.get('model_state', ckpt)
+            self.sentiment_model.load_state_dict(state, strict=False)
+
+            self.sentiment_model.to(self.device).eval()
+            self.sentiment_tokenizer = tokenizer
             print(f"✅ 情感分类模型加载成功！")
         except Exception as e:
-            print(f"加载情感分类模型时出错: {e}")
-            raise
+            print(f"[警告] 情感分类模型加载失败，将使用中性占位模型继续运行。原因：{e}")
+            self.sentiment_model = NeutralSentimentStub()
+            self.sentiment_tokenizer = BertTokenizer.from_pretrained(bert_model_name)
 
         # 加载主模型
         self.primary_interactor = LLMInteractor(
             model_path=primary_model_path,
-            device_map=device_map,
-            torch_dtype=torch_dtype
+            torch_dtype="auto"
         )
 
         # 加载顾问模型
         self.consultant_interactor = LLMInteractor(
             model_path=consultant_model_path,
-            device_map=device_map,
-            torch_dtype=torch_dtype
+            torch_dtype="auto"
         )
 
-    def _predict_sentiment(self, text: str) -> tuple:
+    def _load_bert_and_tokenizer(self, model_id: str) -> Tuple[BertModel, BertTokenizer]:
+        """稳健地加载 BERT 与 Tokenizer"""
+        try:
+            tok = AutoTokenizer.from_pretrained(model_id)
+        except Exception:
+            tok = BertTokenizer.from_pretrained(model_id)
+
+        bert = BertModel.from_pretrained(model_id)
+        return bert, tok
+
+    def _predict_sentiment(self, text: str) -> Tuple[str, float]:
         """
         预测文本情感
 
         Returns:
             (label, confidence): 情感标签和置信度
-            label: '消极', '中性', '积极'
+            label: '消极', '中性' (仅3类时), '积极'
         """
-        encoding = self.sentiment_tokenizer(
-            text,
-            add_special_tokens=True,
-            max_length=self.max_sentiment_len,
-            padding='max_length',
-            truncation=True,
-            return_attention_mask=True,
-            return_tensors='pt'
-        )
-        input_ids = encoding['input_ids'].to(self.device)
-        attention_mask = encoding['attention_mask'].to(self.device)
+        if isinstance(self.sentiment_model, NeutralSentimentStub):
+            return '中性', 0.50
 
-        with torch.no_grad():
-            outputs = self.sentiment_model(input_ids=input_ids, attention_mask=attention_mask)
-            probs = torch.softmax(outputs, dim=1)
-            conf, pred = torch.max(probs, dim=1)
+        try:
+            encoding = self.sentiment_tokenizer(
+                text,
+                add_special_tokens=True,
+                max_length=self.max_sentiment_len,
+                padding='max_length',
+                truncation=True,
+                return_attention_mask=True,
+                return_tensors='pt'
+            )
+            input_ids = encoding['input_ids'].to(self.device)
+            attention_mask = encoding['attention_mask'].to(self.device)
 
-        label_map = ['消极', '中性', '积极']
-        return label_map[pred.item()], conf.item()
+            with torch.no_grad():
+                logits = self.sentiment_model(input_ids=input_ids, attention_mask=attention_mask)
+                probs = torch.softmax(logits, dim=1)
+                conf, pred = torch.max(probs, dim=1)
 
-    def _extract_thinking_process(self, raw_text: str) -> str:
-        """从顾问模型输出中提取思考过程"""
-        match = re.search(r"<thinking>(.*?)</thinking>", raw_text, re.DOTALL)
-        if match:
-            return match.group(1).strip()
-        return ""
+            # 根据类别数选择标签映射
+            if self.n_sentiment_classes == 2:
+                label_map = ['消极', '积极']
+            else:
+                label_map = ['消极', '中性', '积极']
 
-    def _build_primary_prompt(
-        self,
-        user_input: str,
-        consultant_thinking: str,
-        history: List[Dict]
-    ) -> str:
-        """
-        构建主模型的提示词
-
-        Args:
-            user_input: 用户输入
-            consultant_thinking: 顾问思考过程
-            history: 对话历史
-
-        Returns:
-            构建好的提示词
-        """
-        if consultant_thinking:
-            # 有顾问思路时，组合用户输入和顾问思路
-            final_prompt = f'''这是来访者的问题:
-"{user_input}"
-
-这是心理顾问模型的分析和思考过程，请你参考这些思路每次只问一个问题，当遇到极端危机处理时，应立即让来访者转接专业心理咨询。不需要参考时间而是更多的关注问题的根源，然后直接以友善、专业，富有同情心，富含共情的口吻询问或者回答来访者。当问了5到7轮后应当及时给出建议不要再问问题不必再听取顾问的思路，然后直接以友善、专业，富有同情心，富含共情的口吻询问或者回答来访者:
-
---- 顾问思路 ---
-{consultant_thinking}
---- 思路结束 ---'''
-        else:
-            # 没有顾问思路时，直接使用用户输入
-            final_prompt = user_input
-
-        return final_prompt
+            return label_map[pred.item()], float(conf.item())
+        except Exception as e:
+            print(f"[警告] 情感预测失败，返回中性。原因：{e}")
+            return '中性', 0.50
 
     def _call_consultant(self, history: List[Dict]) -> str:
         """
         调用顾问模型生成思考过程
 
         Args:
-            history: 对话历史
+            history: 对话历史 (OpenAI格式)
 
         Returns:
             顾问模型的思考过程
         """
-        # 构建对话历史
+        # 构建对话历史文本
         history_text = self.consultant_interactor.tokenizer.apply_chat_template(
             history,
             tokenize=False,
             add_generation_prompt=False
         )
 
-        prompt = f"""【分析任务指令】
-作为一名专业的心理分析顾问，你的任务是基于下方提供的完整对话历史，进行深入、结构化的思考，思考时不要关注时间定位，而应该更加关注事件本身，思考过程必须和之前是不一样的。
+        prompt = f"""##角色
+你是一名经验丰富的心理咨询师,擅长运用理情行为疗法等专业技术为来访者提供支持与引导。
+
+##注意事项
+-你需解答用户的心理问题并说明思考过程,且确保回复遵循特定原则与格式
+当用户征求你的意见时不要在提问,直接根据咨询者的心理问问题给出相关建议。
+-你要给出下面的思考过程并且思考聚焦于以下类型:
+1.模式识别:需连接当前行为,来访者的具体情绪以及情绪解释与长期关系模式
+2.溯源需求:需追溯家庭背景、成长经历、重大事件
+3.认知重构:需解构非理性信念
+4.危机预警:需触发风险评估与转介流程
+
+##技能
+###技能1:开展咨询会话
+-温和沟通以营造安全环境,用贴近生活的语言共情来访者的困扰
+-按需提问获取信息,及时反馈,并适度普及心理知识。
+
+###技能2:运用核心咨询技能
+状况理解:通过积极倾听与适时提问,了解来访者的具体困扰,探索情绪及背后的想法与信念,关注问题背景及相关人际关系。
+-认知梳理:帮助来访者觉察并识别可能存在的不合理信念,循序渐进引导理性思考,探讨想法与情绪间的关联。
+-方案建议:在充分理解情况后,协助来访者建立理性思维方式,提供系统性的解决方案
+
+###技能3:提出建议与处理特殊情况
+-提供可操作的建议,包括实施步骤、应对困难的方法及效果评估方式。
+-结合实际情况提建议,通过积极鼓励增强来访者的执行信心。
+若遇自伤、严重病症等情况,立即建议寻求线下专业医疗帮助力。
+
+##约束条件
+-聊天过程中无需解释自身的咨询技巧与行为,以保持对话自然流畅。对话中保持适度的专业界限,在提供温暖支持的同时,明确咨询的局限性。
+
 ---
 【完整对话历史】
 {history_text}
 <|im_start|>assistant
+<think>
 """
 
-        model_inputs = self.consultant_interactor.tokenizer(
-            [prompt],
-            return_tensors="pt"
-        ).to(self.device)
+        # 关键：将输入移到模型设备
+        model_inputs = self.consultant_interactor.tokenizer([prompt], return_tensors="pt")
+        model_inputs = {k: v.to(self.consultant_interactor.model.device) for k, v in model_inputs.items()}
 
         with torch.no_grad():
             outputs = self.consultant_interactor.model.generate(
@@ -265,14 +339,14 @@ class TripleModelAgent:
             skip_special_tokens=True
         )
 
-        return self._extract_thinking_process(response)
+        return extract_thinking_process(response)
 
     def _call_primary(self, messages: List[Dict]) -> str:
         """
         调用主模型生成回复
 
         Args:
-            messages: 消息列表
+            messages: 消息列表 (OpenAI格式)
 
         Returns:
             主模型的回复
@@ -283,10 +357,9 @@ class TripleModelAgent:
             add_generation_prompt=True
         )
 
-        model_inputs = self.primary_interactor.tokenizer(
-            [prompt],
-            return_tensors="pt"
-        ).to(self.primary_interactor.model.device)
+        # 关键：将输入移到模型设备
+        model_inputs = self.primary_interactor.tokenizer([prompt], return_tensors="pt")
+        model_inputs = {k: v.to(self.primary_interactor.model.device) for k, v in model_inputs.items()}
 
         with torch.no_grad():
             outputs = self.primary_interactor.model.generate(
@@ -359,24 +432,40 @@ class TripleModelAgent:
         else:
             print(f"    [决策]: 情绪为{sentiment_label}，主模型将直接回复")
 
-        # 步骤3: 调用主模型生成最终回复
-        final_user_prompt = self._build_primary_prompt(
-            last_client_message,
-            consultant_thinking,
-            history
-        )
+        # 步骤3: 构建主模型提示词
+        if consultant_thinking:
+            final_user_prompt = (
+                f'这是来访者的问题:\n"{last_client_message}"\n\n'
+                f'这是心理顾问模型的分析和思考过程，'
+                f'请你参考这些思路每次只问一个问题，当遇到极端危机处理时，应立即让来访者转接专业心理咨询。'
+                f'当了解了来访者的具体背景和问题后应当及时给出建议就不要再问问题了，'
+                f'不需要参考时间而是更多的关注问题的根源，然后直接以友善、专业，富有同情心，'
+                f'富含共情的口吻询问或者回答来访者：\n\n'
+                f'--- 顾问思路 ---\n{consultant_thinking}\n--- 思路结束 ---'
+            )
+        else:
+            final_user_prompt = last_client_message
 
         # 构建主模型消息列表
         primary_messages = []
         if self.system_prompt:
             primary_messages.append({"role": "system", "content": self.system_prompt})
 
-        # 添加历史对话
+        # 添加历史对话（去除 <think> 标签）
         for msg in history[:-1]:  # 排除最后一条（当前要回复的）
             role_map = {"counselor": "assistant", "client": "user"}
+
+            # 清理消息内容：去除 <think> 标签
+            message_content = msg['message']
+            if '<think>' in message_content:
+                # 提取主模型的实际回复（去除思考过程）
+                parts = message_content.split("</thinking>")
+                if len(parts) > 1:
+                    message_content = parts[-1].strip()
+
             primary_messages.append({
                 "role": role_map.get(msg['role'], msg['role']),
-                "content": msg['message']
+                "content": message_content
             })
 
         # 添加当前用户消息
@@ -387,7 +476,7 @@ class TripleModelAgent:
 
             # 如果有顾问思路，组合到响应中
             if consultant_thinking:
-                assistant_full_response = f"<thinking>\n{consultant_thinking}\n</thinking>\n\n{response}"
+                assistant_full_response = f"<think>\n{consultant_thinking}\n</thinking>\n\n{response}"
             else:
                 assistant_full_response = response
 
@@ -403,7 +492,7 @@ class TripleModelAgent:
 # ================================
 
 def get_triple_model_preset_prompt(prompt_type: str = "cbt") -> str:
-    """获取预设系统提示词"""
+    """获取预设系统提示词（与 Gradio 应用保持一致）"""
     prompts = {
         "cbt": """你是一位精通理情行为疗法（Rational Emotive Behavior Therapy，简称REBT）的心理咨询师，能够合理地采用理情行为疗法给来访者提供专业地指导和支持，缓解来访者的负面情绪和行为反应，帮助他们实现个人成长和心理健康。理情行为治疗主要包括以下几个阶段，下面是对话阶段列表，并简要描述了各个阶段的重点。
 

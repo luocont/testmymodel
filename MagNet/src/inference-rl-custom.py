@@ -2,14 +2,14 @@
 使用本地强化学习模型生成心理咨询对话
 
 特点：
-- 保留 Client Agent 的原有逻辑（使用框架预设提示词）
-- 替换 Counselor Agent 为本地 Qwen3 强化学习模型
-- 支持自定义系统提示词
-- 生成与原始格式一致的 session_*.json 文件
+- 从 eval.json 读取数据集
+- 每次读入 role 为 user 的 content 作为输入
+- 模型作为 assistant 进行回答
+- 生成符合 CTRS 评估格式的 session_*.json 文件
 
 使用示例：
     # 使用配置文件
-    python inference-rl-custom.py --config ../config_rl.json
+    python inference-rl-custom.py --config ../config_triple.json
 
     # 使用命令行参数
     python inference-rl-custom.py --model_path /path/to/model --output_dir ../output-rl
@@ -47,7 +47,7 @@ from rl_counselor_agent import RLCounselorAgent, get_preset_prompt
 # ============================================
 # 配置
 # ============================================
-DATA_FILE = "../dataset/data_cn.json"
+DATA_FILE = "../dataset/eval.json"
 PROMPTS_DIR = "../prompts/cn/"
 
 # 用于 Client Agent 的 LLM 客户端（全局变量，延迟加载）
@@ -189,20 +189,36 @@ class RLTherapySession:
     def _exchange_statements(self):
         """交替生成对话"""
         for turn in range(self.max_turns):
-            print(f"    轮次 {turn + 1}/{self.max_turns}")
+            print(f"\n    轮次 {turn + 1}/{self.max_turns}")
+            print("=" * 60)
 
             # 咨询师回应（使用本地 RL 模型）
             counselor_response = self.counselor_agent.generate(self.history)
             self._add_to_history("counselor", counselor_response)
-            print(f"      咨询师: {counselor_response[:40]}{'...' if len(counselor_response) > 40 else ''}")
+            print(f"    📋 咨询师:\n{counselor_response}")
 
             # 来访者回应（使用框架原有 Client Agent）
             client_response = self.client_agent.generate(self.history)
             client_response = client_response.replace('Client: ', '')
-            # 移除 [/END] 标记（不中断对话，确保进行满20轮）
-            client_response = client_response.replace('[/END]', '')
+
+            # 前10轮：移除 [/END] 标记，不中断对话
+            # 10轮后：检测 [/END] 标记，如果存在则结束对话
+            if turn < 10:
+                # 移除 [/END] 标记
+                client_response = client_response.replace('[/END]', '')
+            else:
+                # 检测是否有结束标记
+                if '[/END]' in client_response:
+                    # 移除标记并添加到历史
+                    client_response = client_response.replace('[/END]', '')
+                    self._add_to_history("client", client_response)
+                    print(f"\n    📋 来访者:\n{client_response}")
+                    print("\n    ✓ 检测到结束标记，会话结束")
+                    print("=" * 60)
+                    break
+
             self._add_to_history("client", client_response)
-            print(f"      来访者: {client_response[:40]}{'...' if len(client_response) > 40 else ''}")
+            print(f"\n    📋 来访者:\n{client_response}")
 
     def run_session(self):
         """运行完整会话"""
@@ -256,6 +272,15 @@ def run_therapy_session(
 
         with open(file_path, "w", encoding="utf-8") as f:
             json.dump(session_data, f, ensure_ascii=False, indent=4)
+
+        # 清理 GPU 缓存
+        try:
+            import torch
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+                print(f"[{file_number}/{total}] GPU 缓存已清理")
+        except Exception as e:
+            print(f"[{file_number}/{total}] 清理 GPU 缓存时出现警告: {e}")
 
         print(f"[{file_number}/{total}] 完成，保存到 {file_name}")
 

@@ -93,13 +93,19 @@ class RLCounselorAgent(Agent):
         """获取默认系统提示词"""
         return """你是一位专业的心理咨询师，擅长认知行为疗法(CBT)。
 
-你的任务是：
-1. 仔细倾听来访者的陈述，理解他们的情绪和需求
-2. 提供共情、专业的回应
-3. 运用合适的咨询技术帮助来访者探索问题
-4. 每次回应保持在30-80字之间
+【重要指示】
+1. 你只能输出咨询师（你）的单次回应
+2. 禁止重复或转述对话历史
+3. 禁止输出来访者的话
+4. 禁止添加任何角色标签（如"咨询师："、"来访者："等）
+5. 禁止输出"再见"、"期待下次见面"等结束语，除非对话真正结束
 
-请直接输出你的回应，不要添加"咨询师："等前缀或格式标记。"""
+你的回应风格：
+- 共情、专业、简洁
+- 每次回应30-80字
+- 直接输出回应内容，不要有任何前缀或格式
+
+现在请直接输出你的咨询师回应："""
 
     def _load_model(self):
         """延迟加载模型和分词器"""
@@ -113,50 +119,133 @@ class RLCounselorAgent(Agent):
         # 加载分词器
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_path,
-            trust_remote_code=self.trust_remote_code
+            trust_remote_code=self.trust_remote_code,
+            use_fast=False  # 使用慢速分词器，更稳定
         )
 
         # 设置 pad_token（如果不存在）
         if self.tokenizer.pad_token is None:
-            self.tokenizer.pad_token = self.tokenizer.eos_token
+            if self.tokenizer.eos_token is not None:
+                self.tokenizer.pad_token = self.tokenizer.eos_token
+            else:
+                # 如果连 eos_token 都没有，添加一个特殊的 pad token
+                self.tokenizer.add_special_tokens({'pad_token': '[PAD]'})
         if self.tokenizer.pad_token_id is None:
-            self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
+            self.tokenizer.pad_token_id = self.tokenizer.eos_token_id if self.tokenizer.eos_token_id is not None else 0
+
+        print(f"[RLCounselorAgent] 分词器加载完成, vocab_size={len(self.tokenizer)}")
 
         # 加载模型
-        self.model = AutoModelForCausalLM.from_pretrained(
-            self.model_path,
-            device_map=self.device_map,
-            trust_remote_code=self.trust_remote_code,
-            torch_dtype=self.torch_dtype
-        )
+        # 如果指定了 device_map="auto"，则让 transformers 自动分配
+        # 使用 max_memory 防止模型部分卸载到 CPU
+        if self.device_map == "auto":
+            import torch
+            # 获取 GPU 总显存，留出 2GB 作为缓冲
+            if torch.cuda.is_available():
+                gpu_memory = torch.cuda.get_device_properties(0).total_memory
+                # 设置 max_memory，确保不卸载到 CPU（CPU 设 0MB）
+                max_memory = {
+                    0: int(gpu_memory * 0.95),  # 使用 95% 的显存
+                    "cpu": 0  # 不使用 CPU 内存
+                }
+                self.model = AutoModelForCausalLM.from_pretrained(
+                    self.model_path,
+                    device_map="auto",
+                    trust_remote_code=self.trust_remote_code,
+                    torch_dtype=self.torch_dtype,
+                    max_memory=max_memory,
+                    low_cpu_mem_usage=True
+                )
+            else:
+                # 如果没有 CUDA，回退到正常加载
+                self.model = AutoModelForCausalLM.from_pretrained(
+                    self.model_path,
+                    device_map="auto",
+                    trust_remote_code=self.trust_remote_code,
+                    torch_dtype=self.torch_dtype,
+                    low_cpu_mem_usage=True
+                )
+        else:
+            # 先加载到 CPU，然后移到 GPU
+            self.model = AutoModelForCausalLM.from_pretrained(
+                self.model_path,
+                trust_remote_code=self.trust_remote_code,
+                torch_dtype=self.torch_dtype,
+                device_map={"": "cuda"}  # 强制所有层都在 GPU 上
+            )
+
         self.model.eval()
 
         print(f"[RLCounselorAgent] 模型加载完成")
-        print(f"[RLCounselorAgent] 设备: {self.model.device}")
+        # 确保模型在正确的设备上
+        if hasattr(self.model, 'device'):
+            self.device = self.model.device
+        else:
+            # 对于多设备分布的情况，获取第一个参数的设备
+            self.device = next(self.model.parameters()).device
+
+        # 验证设备是 CUDA
+        if self.device.type != "cuda":
+            print(f"[RLCounselorAgent] 警告: 模型不在 CUDA 设备上，当前设备: {self.device}")
+            # 如果不在 GPU 上，尝试移到 GPU
+            try:
+                import torch
+                if torch.cuda.is_available():
+                    self.model = self.model.to("cuda")
+                    self.device = torch.device("cuda")
+                    print(f"[RLCounselorAgent] 已将模型移至 CUDA")
+            except Exception as e:
+                print(f"[RLCounselorAgent] 移动模型到 CUDA 失败: {e}")
+
+        print(f"[RLCounselorAgent] 设备: {self.device}")
         print(f"[RLCounselorAgent] 数据类型: {self.torch_dtype}")
 
-    def _build_conversation(self, history: List[Dict]) -> List[Dict]:
+    def _build_conversation(self, history: List[Dict]) -> tuple:
         """
-        将历史记录转换为模型对话格式
+        将历史记录转换为 InternLM2 模型的 chat 格式
 
         Args:
             history: 历史消息列表，格式为 [{"role": "counselor"/"client", "message": "..."}]
 
         Returns:
-            标准格式的消息列表（OpenAI 格式）
+            (query, history) 元组，适用于 model.chat() 方法
         """
-        messages = []
+        # InternLM2 的 chat 方法期望的 history 格式
+        # history 是一个列表，每个元素是 (query, response) 元组
+        internlm_history = []
 
-        for msg in history:
-            role = msg.get("role", "").lower()
-            content = msg.get("message", "")
+        # 如果历史为空，添加系统提示词作为第一条
+        if not history:
+            return "", []
 
-            if role == "counselor":
-                messages.append({"role": "assistant", "content": content})
-            elif role == "client":
-                messages.append({"role": "user", "content": content})
+        # 将系统提示词注入到第一条对话中
+        # InternLM2 不支持单独的系统提示词参数，所以我们将其添加到第一条查询前
+        first_query_prefix = f"[系统指示]\n{self.system_prompt}\n\n[来访者说]"
 
-        return messages
+        # 历史记录应该是成对的（来访者-咨询师）
+        # 跳过最后一条（因为那是当前来访者的话，需要作为 query）
+        for i in range(0, len(history) - 1, 2):
+            if i + 1 < len(history):
+                client_msg = history[i].get("message", "")
+                counselor_msg = history[i + 1].get("message", "")
+                if client_msg and counselor_msg:
+                    # 如果是第一条，添加系统提示词
+                    if i == 0:
+                        client_msg = f"{first_query_prefix}\n{client_msg}"
+                    internlm_history.append((client_msg, counselor_msg))
+
+        # 获取最后一条来访者消息作为 query
+        query = ""
+        if history:
+            last_msg = history[-1]
+            if last_msg.get("role") == "client":
+                query = last_msg.get("message", "")
+
+        # 如果这是第一条消息，添加系统提示词
+        if not internlm_history and query:
+            query = f"{first_query_prefix}\n{query}"
+
+        return query, internlm_history
 
     def generate(
         self,
@@ -185,58 +274,31 @@ class RLCounselorAgent(Agent):
         if self.model is None:
             self._load_model()
 
-        # 构建对话
-        conversation = self._build_conversation(history)
-        messages = [
-            {"role": "system", "content": self.system_prompt},
-            *conversation
-        ]
+        # 构建对话（InternLM2 格式）
+        query, internlm_history = self._build_conversation(history)
 
-        # 应用聊天模板
-        try:
-            text = self.tokenizer.apply_chat_template(
-                messages,
-                tokenize=False,
-                add_generation_prompt=True
-            )
-        except Exception as e:
-            print(f"[警告] 聊天模板应用失败: {e}")
-            # 回退到简单格式
-            text = f"{self.system_prompt}\n\n"
-            for msg in messages[1:]:
-                role = "用户" if msg["role"] == "user" else "助手"
-                text += f"{role}: {msg['content']}\n"
-            text += "助手:"
+        # 调试：打印查询和历史（首次生成时）
+        if not hasattr(self, '_debug_printed'):
+            print(f"\n[调试] InternLM2 输入格式:")
+            print(f"  Query: {query[:100]}...")
+            print(f"  History length: {len(internlm_history)}")
+            if internlm_history:
+                print(f"  Last history item: {str(internlm_history[-1][:100])}...")
+            self._debug_printed = True
 
         # 重试循环
         for attempt in range(max_retries):
             try:
-                # 编码输入（与 InternLM2 官方示例对齐）
-                inputs = self.tokenizer([text], return_tensors="pt")
-
-                # 将输入移到模型设备（与官方示例对齐）
-                for k, v in inputs.items():
-                    inputs[k] = v.to(self.model.device)
-
-                # 记录输入长度，用于提取生成的部分
-                input_length = inputs['input_ids'].shape[1]
-
-                # 生成参数（与官方示例对齐）
-                # 官方: {"max_length": 128, "top_p": 0.8, "temperature": 0.8, "do_sample": True, "repetition_penalty": 1.0}
-                gen_kwargs = {
-                    "max_new_tokens": max_tokens,
-                    "top_p": 0.8,
-                    "temperature": temp,
-                    "do_sample": temp > 0,
-                    "repetition_penalty": 1.0
-                }
-
-                # 生成响应
-                with torch.no_grad():
-                    outputs = self.model.generate(**inputs, **gen_kwargs)
-
-                # 解码响应：只取新生成的部分（跳过输入部分）
-                response = self.tokenizer.decode(outputs[0][input_length:].tolist(), skip_special_tokens=True)
+                # 使用 InternLM2 的 chat 方法
+                response, _ = self.model.chat(
+                    self.tokenizer,
+                    query,
+                    history=internlm_history,
+                    max_new_tokens=max_tokens,
+                    temperature=temp,
+                    top_p=0.8,
+                    do_sample=temp > 0
+                )
 
                 # 清理响应
                 response = response.strip()
@@ -244,11 +306,31 @@ class RLCounselorAgent(Agent):
                 # 移除可能的前缀
                 prefixes_to_remove = [
                     "咨询师：", "咨询师:", "Counselor:", "Assistant:",
-                    "助手：", "助手:", "AI:", "ai:"
+                    "助手：", "助手:", "AI:", "ai:",
+                    "心理咨询师：", "心理咨询师:",
+                    "\n咨询师：", "\n咨询师:", "\n助手：", "\n助手:",
+                    "来访者：", "来访者:", "Client:"
                 ]
                 for prefix in prefixes_to_remove:
                     if response.startswith(prefix):
                         response = response[len(prefix):].strip()
+
+                # 检测并移除重复的对话内容（模型有时会重复历史对话）
+                # 如果响应中包含多轮对话标记，只取最后一行咨询师回复
+                if response.count("咨询师") > 1 or response.count("来访者") > 1:
+                    # 尝试提取最后一行咨询师回复
+                    lines = response.split('\n')
+                    filtered_lines = []
+                    for line in lines:
+                        line = line.strip()
+                        # 跳过来访者的话和重复的咨询师标签
+                        if not line or line.startswith("来访者") or line.startswith("Client"):
+                            continue
+                        if line.startswith("咨询师") or line.startswith("助手"):
+                            continue
+                        filtered_lines.append(line)
+                    if filtered_lines:
+                        response = filtered_lines[-1]  # 取最后一行
 
                 # 如果响应为空或太短，返回默认响应
                 if not response or len(response) < 3:
@@ -266,6 +348,15 @@ class RLCounselorAgent(Agent):
                         max_tokens = max_tokens // 2
                         continue
                 raise
+            except (TypeError, AttributeError, ValueError) as e:
+                # 捕获特定类型的错误并打印详细信息
+                import traceback
+                print(f"[错误] 生成失败 ({type(e).__name__}): {e}")
+                print(f"[详细错误]\n{traceback.format_exc()}")
+                if attempt == max_retries - 1:
+                    return "我理解你的感受。请继续告诉我更多。"
+                else:
+                    print(f"重试中... ({attempt + 1}/{max_retries})")
             except Exception as e:
                 print(f"[错误] 生成失败: {e}")
                 if attempt == max_retries - 1:

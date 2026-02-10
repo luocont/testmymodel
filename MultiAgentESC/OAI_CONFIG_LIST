@@ -1,0 +1,7 @@
+[
+    {
+        "model": "qwen2.5-7b-instruct",
+        "base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+        "api_key": "sk-40fb3997d3ed485ba390a9c4ae3bd2d2"
+    }
+]
